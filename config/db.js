@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-constconnectDB = async () => {
+const connectDB = async () => {
   try {
     await mongoose.connect("mongodb://localhost:27017/leave-management", {});
     console.log("MongoDB connected successfully");
