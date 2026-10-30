@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api", leaveRoutes);
 
 // Start the server
-const PORT = process.env.PORT || 5050;
+const PORT = 10000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
