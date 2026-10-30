@@ -1,11 +1,11 @@
 // app.js
-constexpress = require("express");
-constbodyParser = require("body-parser");
-constpath = require("path"); // Add this to use 'path' module
-constconnectDB = require("./config/db");
-constleaveRoutes = require("./routes/leaveRoutes");
+const express = require("express");
+const bodyParser = require("body-parser");
+const path = require("path"); // Add this to use 'path' module
+const connectDB = require("./config/db");
+const leaveRoutes = require("./routes/leaveRoutes");
 
-constapp = express();
+const app = express();
 
 // Connect to MongoDB
 connectDB();
@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/api", leaveRoutes);
 
 // Start the server
-constPORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
