@@ -1,7 +1,7 @@
 // routes/leaveRoutes.js
-constexpress = require("express");
-constrouter = express.Router();
-constUser = require("../models/User");
+const express = require("express");
+const router = express.Router();
+const User = require("../models/User");
 
 // Route to handle user registration
 router.post("/register", async (req, res) => {
@@ -14,22 +14,22 @@ router.post("/register", async (req, res) => {
   } = req.body;
 
   try {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
     // Check if the user already exists
-    constexistingUser = awaitUser.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      returnres
+      return res
         .status(400)
         .json({ message: "User already exists with this email" });
     }
 
-    // Validate email format
-    constemailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      returnres.status(400).json({ message: "Invalid email format" });
-    }
-
     // Create a new user
-    constnewUser = newUser({
+    const newUser = new User({
       username,
       email,
       rollNumber,
@@ -37,7 +37,7 @@ router.post("/register", async (req, res) => {
       medicalLeave,
     });
 
-    awaitnewUser.save();
+    await newUser.save();
     res.status(201).json({
       message: "User created successfully",
       userId: newUser._id,
@@ -57,9 +57,9 @@ router.post("/login", async (req, res) => {
   const { email } = req.body;
 
   try {
-    constuser = awaitUser.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
-      returnres.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // Return user details and leave balance
@@ -80,9 +80,9 @@ router.post("/login", async (req, res) => {
 // Route to get leave balance by user ID
 router.get("/leave-balance/:id", async (req, res) => {
   try {
-    constuser = awaitUser.findById(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) {
-      returnres.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.json({
@@ -100,15 +100,15 @@ router.post("/apply-leave/:id", async (req, res) => {
   const { type, days } = req.body;
 
   try {
-    constuser = awaitUser.findById(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) {
-      returnres.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // Ensure days is a number
-    constleaveDays = parseInt(days);
+    const leaveDays = parseInt(days);
     if (isNaN(leaveDays) || leaveDays <= 0) {
-      returnres.status(400).json({ message: "Invalid number of days" });
+      return res.status(400).json({ message: "Invalid number of days" });
     }
 
     // Add leave days instead of reducing them
@@ -117,10 +117,10 @@ router.post("/apply-leave/:id", async (req, res) => {
     } else if (type === "medical") {
       user.medicalLeave += leaveDays;
     } else {
-      returnres.status(400).json({ message: "Invalid leave type" });
+      return res.status(400).json({ message: "Invalid leave type" });
     }
 
-    awaituser.save();
+    await user.save();
     res.json({
       message: "Leave added successfully",
       casualLeave: user.casualLeave,
